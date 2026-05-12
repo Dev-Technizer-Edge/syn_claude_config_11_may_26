@@ -61,10 +61,27 @@ function validatePhone(phone) {
   return typeof phone === 'string' && /^\+?[\d\s\-().]{7,15}$/.test(phone.trim());
 }
 
+/**
+ * Validates password strength: minimum 10 characters with at least one uppercase
+ * letter, one lowercase letter, one digit, and one special character.
+ *
+ * @param {string} password
+ * @returns {boolean}
+ */
+function validatePasswordStrength(password) {
+  return typeof password === 'string' &&
+    password.length >= 10 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /[0-9]/.test(password) &&
+    /[^A-Za-z0-9]/.test(password);
+}
+
 module.exports = {
   validateEmail,
   validatePassword,
   validateUUID,
   sanitizeString,
-  validatePhone
+  validatePhone,
+  validatePasswordStrength
 };

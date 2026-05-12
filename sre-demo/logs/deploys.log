@@ -1,0 +1,3 @@
+2026-05-10 14:22 — v1.2.3 — initial release
+2026-05-11 10:15 — v1.2.4 — added /order/:id route
+2026-05-12 02:00 — v1.2.5 — config: REDIS_PORT updated 6379 → 6380 (cache cluster migration WIP)

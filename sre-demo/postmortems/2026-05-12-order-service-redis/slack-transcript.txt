@@ -1,0 +1,7 @@
+[02:58] @pagerduty: SEV-2 — order-service error rate 100%, ECONNREFUSED detected
+[02:59] @oncall-sre: I'm on it. Pulling logs.
+[03:01] @oncall-sre: Seeing ECONNREFUSED to redis on 6380. We're supposed to be on 6379.
+[03:02] @oncall-sre: Confirmed — last night's deploy changed REDIS_PORT in .env.
+[03:03] @oncall-sre: Reverting now.
+[03:04] @oncall-sre: Service healthy. Error rate back to baseline.
+[03:05] @oncall-sre: Will write the post-mortem in the morning.

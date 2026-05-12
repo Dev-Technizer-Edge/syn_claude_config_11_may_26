@@ -1,0 +1,23 @@
+[2026-05-12T02:58:11.111Z] order-service listening on 3000
+[2026-05-12T02:58:14.234Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:14.456Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:15.789Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:16.112Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:17.445Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:18.778Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:20.001Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:21.224Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:23.557Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:24.880Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:26.103Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:27.426Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:29.659Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:30.882Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:32.005Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:33.228Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:34.561Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:35.884Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:37.107Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:38.330Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:39.653Z] Redis connection error: connect ECONNREFUSED 127.0.0.1:6380
+[2026-05-12T02:58:40.976Z] Request failed: connect ECONNREFUSED 127.0.0.1:6380
