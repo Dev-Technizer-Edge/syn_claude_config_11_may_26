@@ -1,0 +1,304 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   FILE: styles.css
+   Claude Bulk Delete — Injected Stylesheet
+   Dark purple theme: #7c3aed accents · #0d0a1a background · #a78bfa highlights
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── CSS Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --cbd-accent:      #7c3aed;
+  --cbd-accent-hi:   #a78bfa;
+  --cbd-accent-glow: rgba(124, 58, 237, 0.35);
+  --cbd-bg:          #0d0a1a;
+  --cbd-surface:     #1a1330;
+  --cbd-surface2:    #231a42;
+  --cbd-border:      rgba(167, 139, 250, 0.25);
+  --cbd-text:        #e2d9f3;
+  --cbd-text-muted:  #8b7aaa;
+  --cbd-danger:      #dc2626;
+  --cbd-danger-hi:   #ef4444;
+  --cbd-success:     #16a34a;
+  --cbd-z:           2147483647;
+
+  /* Checkbox dimensions */
+  --cbd-cb-size: 17px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOGGLE BUTTON
+   Fixed at bottom-right: bottom 20px, right 14px
+═══════════════════════════════════════════════════════════════════════════════ */
+#cbd-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 14px;
+  z-index: var(--cbd-z);
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 9px 15px 9px 12px;
+  border: 1px solid var(--cbd-border);
+  border-radius: 10px;
+  background: var(--cbd-surface);
+
+  color: var(--cbd-text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+#cbd-toggle:hover {
+  background: var(--cbd-surface2);
+  color: var(--cbd-accent-hi);
+  border-color: var(--cbd-accent);
+  box-shadow: 0 4px 24px var(--cbd-accent-glow);
+}
+
+#cbd-toggle.cbd-toggle--active {
+  background: var(--cbd-accent);
+  border-color: var(--cbd-accent-hi);
+  color: #fff;
+  box-shadow: 0 4px 24px var(--cbd-accent-glow);
+}
+
+#cbd-toggle svg {
+  flex-shrink: 0;
+  transition: stroke 0.18s;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOOLBAR
+   Appears above the toggle button; slides up with a keyframe animation
+═══════════════════════════════════════════════════════════════════════════════ */
+@keyframes cbd-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cbd-toolbar {
+  position: fixed;
+  bottom: 66px;     /* sits just above the toggle button */
+  right: 14px;
+  z-index: var(--cbd-z);
+
+  display: none;    /* hidden by default; JS adds --visible */
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+
+  min-width: 180px;
+  padding: 12px;
+  border: 1px solid var(--cbd-border);
+  border-radius: 12px;
+  background: var(--cbd-surface);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(124,58,237,0.08);
+}
+
+.cbd-toolbar.cbd-toolbar--visible {
+  display: flex;
+  animation: cbd-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Count label */
+.cbd-count {
+  font-size: 12px;
+  color: var(--cbd-text-muted);
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--cbd-border);
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Shared button base ────────────────────────────────────────────────────── */
+.cbd-btn {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* Ghost variant: Select All / Clear */
+.cbd-btn--ghost {
+  background: transparent;
+  color: var(--cbd-text-muted);
+  border-color: var(--cbd-border);
+}
+.cbd-btn--ghost:hover {
+  background: var(--cbd-surface2);
+  color: var(--cbd-accent-hi);
+  border-color: var(--cbd-accent);
+}
+
+/* Danger variant: Delete N */
+.cbd-btn--danger {
+  background: var(--cbd-danger);
+  color: #fff;
+  border-color: var(--cbd-danger-hi);
+}
+.cbd-btn--danger:hover:not(:disabled) {
+  background: var(--cbd-danger-hi);
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.4);
+}
+.cbd-btn--danger:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ROW WRAPPER — flex layout injected on the div inside each <li>
+═══════════════════════════════════════════════════════════════════════════════ */
+.cbd-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SELECTED ROW HIGHLIGHT
+   Applied to the <li> element when its checkbox is checked
+═══════════════════════════════════════════════════════════════════════════════ */
+li.cbd-selected {
+  background: rgba(139, 92, 246, 0.12) !important;
+  border-radius: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   DELETED ROW FADE
+   Applied after the API call succeeds — row visually "disappears"
+═══════════════════════════════════════════════════════════════════════════════ */
+li.cbd-deleted {
+  opacity: 0.2 !important;
+  pointer-events: none !important;
+  transition: opacity 0.4s ease !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   CHECKBOX COLUMN
+   The wrapper span injected as the first child of the row wrapper
+═══════════════════════════════════════════════════════════════════════════════ */
+.cbd-check-col {
+  display: none; /* hidden until bulk-mode is ON (JS sets display:flex) */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 100%;
+  padding: 0 6px 0 4px;
+  cursor: pointer;
+  position: relative;
+  z-index: var(--cbd-z);
+}
+
+/* ── Hidden native <input type="checkbox"> ────────────────────────────────── */
+.cbd-cb {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none; /* clicks go to the wrapper span instead */
+}
+
+/* ── Visual checkbox (the span sibling after the hidden input) ─────────────── */
+.cbd-mark {
+  display: inline-block;
+  width: var(--cbd-cb-size);
+  height: var(--cbd-cb-size);
+  border: 2px solid var(--cbd-border);
+  border-radius: 4px;
+  background: transparent;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+/* ── Hover state ─────────────────────────────────────────────────────────── */
+.cbd-check-col:hover .cbd-mark {
+  border-color: var(--cbd-accent-hi);
+  box-shadow: 0 0 8px var(--cbd-accent-glow);
+}
+
+/* ── Checked state: CSS sibling selector .cbd-cb:checked ~ .cbd-mark ─────── */
+.cbd-cb:checked ~ .cbd-mark {
+  background: var(--cbd-accent);
+  border-color: var(--cbd-accent-hi);
+  box-shadow: 0 0 8px var(--cbd-accent-glow);
+}
+
+/* ── Checkmark drawn via border trick (::after pseudo-element) ────────────── */
+.cbd-cb:checked ~ .cbd-mark::after {
+  content: '';
+  display: block;
+  position: absolute;
+
+  /* Position the checkmark centered inside the box */
+  left: 3px;
+  top: 0px;
+
+  /* Checkmark shape: border-left + border-bottom rotated -45deg */
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+═══════════════════════════════════════════════════════════════════════════════ */
+@keyframes cbd-toast-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cbd-toast {
+  position: fixed;
+  bottom: 130px;
+  right: 14px;
+  z-index: var(--cbd-z);
+
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.cbd-toast--success {
+  background: var(--cbd-success);
+  border: 1px solid rgba(22, 163, 74, 0.6);
+}
+
+.cbd-toast--error {
+  background: var(--cbd-danger);
+  border: 1px solid rgba(220, 38, 38, 0.6);
+}
+
+.cbd-toast--visible {
+  opacity: 1;
+  animation: cbd-toast-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
