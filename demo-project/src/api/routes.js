@@ -28,13 +28,10 @@ router.post('/login', validateBody(['email', 'password']), async (req, res, next
       });
     }
 
-    // In a real app, fetch userRecord from database
-    const mockUserRecord = {
-      id: 'user-001',
-      email,
-      passwordHash: '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-      role: 'user'
-    };
+    // In a real app, fetch userRecord from database by email
+    const mockUserRecord = process.env.DEMO_PASSWORD_HASH
+      ? { id: 'user-001', email, passwordHash: process.env.DEMO_PASSWORD_HASH, role: 'user' }
+      : null;
 
     const result = await loginUser(email, password, mockUserRecord);
 

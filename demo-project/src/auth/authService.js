@@ -8,7 +8,8 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const { logger } = require('../utils/logger');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('JWT_SECRET environment variable is required');
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 const REFRESH_EXPIRES_IN = process.env.REFRESH_EXPIRES_IN || '7d';
 
@@ -29,7 +30,7 @@ async function loginUser(email, password, userRecord) {
     throw new Error('Invalid credentials');
   }
 
-  const isPasswordValid = bcrypt.compare(password, userRecord.passwordHash);
+  const isPasswordValid = await bcrypt.compare(password, userRecord.passwordHash);
 
   if (!isPasswordValid) {
     logger.warn(`Login failed — wrong password for: ${email}`);
@@ -65,10 +66,23 @@ function isTokenExpired(token) {
 
     const now = Math.floor(Date.now() / 1000);
 
-    return decoded.exp > now;
+    return decoded.exp < now;
   } catch (err) {
     return true;
   }
+}
+
+/**
+ * Converts a duration string (e.g. '7d', '1h') to milliseconds.
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function parseDuration(str) {
+  const units = { s: 1000, m: 60000, h: 3600000, d: 86400000 };
+  const match = str.match(/^(\d+)([smhd])$/);
+  if (!match) throw new Error(`Invalid duration format: ${str}`);
+  return parseInt(match[1], 10) * units[match[2]];
 }
 
 /**
@@ -77,14 +91,14 @@ function isTokenExpired(token) {
  * @param {string} refreshToken
  * @returns {object} - { accessToken }
  */
-function refreshToken(refreshToken) {
+async function refreshToken(refreshToken) {
   const storedData = refreshTokenStore.get(refreshToken);
 
   if (!storedData) {
     throw new Error('Invalid refresh token');
   }
 
-  if (isTokenExpired(refreshToken)) {
+  if (Date.now() > storedData.expiresAt) {
     refreshTokenStore.delete(refreshToken);
     throw new Error('Refresh token expired');
   }
@@ -139,7 +153,8 @@ function generateRefreshToken(userId) {
   const token = uuidv4();
   refreshTokenStore.set(token, {
     userId,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    expiresAt: Date.now() + parseDuration(REFRESH_EXPIRES_IN)
   });
   return token;
 }
