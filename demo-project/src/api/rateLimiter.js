@@ -10,14 +10,18 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const store = new Map();
 
 /**
- * Returns the client IP, preferring the first X-Forwarded-For value.
+ * Returns the client IP from req.ip.
+ * Express resolves req.ip via the X-Forwarded-For chain only when the
+ * connection originates from a trusted proxy (app.set('trust proxy', 1) in
+ * src/index.js). Direct connections always use the socket address, so this
+ * value cannot be spoofed by a client setting an arbitrary X-Forwarded-For
+ * header.
  *
  * @param {import('express').Request} req
  * @returns {string}
  */
 function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  return (forwarded ? forwarded.split(',')[0] : req.ip).trim();
+  return req.ip;
 }
 
 /**
@@ -50,7 +54,7 @@ function rateLimiter(req, res, next) {
   res.set('X-RateLimit-Remaining', String(remaining));
   res.set('X-RateLimit-Reset', String(resetSecs));
 
-  if (entry.count > MAX_REQUESTS) {
+  if (entry.count >= MAX_REQUESTS) {
     res.set('Retry-After', String(resetSecs));
     return res.status(429).json({ error: 'Too many requests, please try again later.' });
   }

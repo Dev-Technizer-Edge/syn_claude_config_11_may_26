@@ -2,9 +2,10 @@ const express = require('express');
 const supertest = require('supertest');
 const { rateLimiter, store, MAX_REQUESTS, WINDOW_MS } = require('../../src/api/rateLimiter');
 
-/** Minimal app that applies only the rate limiter. */
+/** Minimal app that applies only the rate limiter (matches production config). */
 function buildApp() {
   const app = express();
+  app.set('trust proxy', 1); // mirrors src/index.js — loopback is trusted in tests
   app.use(rateLimiter);
   app.get('/test', (_req, res) => res.json({ ok: true }));
   return app;
@@ -86,8 +87,8 @@ describe('rateLimiter middleware', () => {
 
   it('tracks different IPs independently', async () => {
     const app = buildApp();
-    // Exhaust the limit for IP A
-    for (let i = 0; i <= MAX_REQUESTS; i++) {
+    // Exhaust the limit for IP A (trust proxy: 1 + loopback connection → XFF is trusted)
+    for (let i = 0; i < MAX_REQUESTS; i++) {
       await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.1');
     }
     const blockedA = await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.1');
@@ -96,5 +97,39 @@ describe('rateLimiter middleware', () => {
     // IP B should be unaffected
     const allowedB = await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.2');
     expect(allowedB.status).toBe(200);
+  });
+
+  it('X-Forwarded-For cannot bypass the rate limit when no reverse proxy is configured', async () => {
+    // No trust proxy — req.ip is always the raw socket address (127.0.0.1 from supertest).
+    const app = express();
+    app.use(rateLimiter);
+    app.get('/test', (_req, res) => res.json({ ok: true }));
+
+    for (let i = 0; i < MAX_REQUESTS; i++) {
+      await supertest(app).get('/test');
+    }
+
+    // Spoofed header must not open a fresh bucket — the real socket IP is still exhausted.
+    const spoofed = await supertest(app)
+      .get('/test')
+      .set('X-Forwarded-For', '9.9.9.9');
+    expect(spoofed.status).toBe(429);
+  });
+
+  it('returns 429 when limit is exceeded regardless of additional upstream hops in X-Forwarded-For', async () => {
+    const app = buildApp();
+
+    // Exhaust the limit as IP 10.0.0.10.
+    for (let i = 0; i < MAX_REQUESTS; i++) {
+      await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.10');
+    }
+
+    // With trust proxy: 1, req.ip = rightmost XFF entry (index 1 from socket).
+    // Prepending an extra upstream address to the left keeps req.ip = 10.0.0.10,
+    // so the same bucket is hit and the request must still be blocked.
+    const withExtraHop = await supertest(app)
+      .get('/test')
+      .set('X-Forwarded-For', '1.2.3.4, 10.0.0.10');
+    expect(withExtraHop.status).toBe(429);
   });
 });
