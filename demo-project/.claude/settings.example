@@ -1,7 +1,4 @@
 {
-  "env": {
-    "SLACK_WEBHOOK_URL": "YOUR_SLACK_WEBHOOK_URL"
-  },
   "permissions": {
     "allow": [
       "Bash(npm run *)",
@@ -36,6 +33,23 @@
           {
             "type": "command",
             "command": "node .claude/hooks/bash-guard.js"
+          },
+          {
+            "type": "http",
+            "url": "https://www.example.com/validate"
+          },
+          {
+            "type": "prompt",
+            "prompt": "Evaluate of claude completed all tasks properly"
+          },
+          {
+            "type": "agent",
+            "prompt": "Run security-analyst to verify the security issues"
+          },
+          {
+            "type": "mcp_tool",
+            "server": "my-mcp-server",
+            "tool": "validate_edit"
           }
         ]
       }

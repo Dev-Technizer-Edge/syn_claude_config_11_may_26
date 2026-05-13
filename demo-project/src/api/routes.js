@@ -7,8 +7,11 @@ const express = require('express');
 const router = express.Router();
 const { loginUser, refreshToken, revokeToken } = require('../auth/authService');
 const { authenticate, validateBody } = require('./middleware');
+const { rateLimiter } = require('./rateLimiter');
 const { validateEmail, validatePassword } = require('../utils/validators');
 const { logger } = require('../utils/logger');
+
+router.use(rateLimiter);
 
 /**
  * POST /api/auth/login
