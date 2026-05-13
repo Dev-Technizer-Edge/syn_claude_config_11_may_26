@@ -88,7 +88,7 @@ describe('rateLimiter middleware', () => {
   it('tracks different IPs independently', async () => {
     const app = buildApp();
     // Exhaust the limit for IP A (trust proxy: 1 + loopback connection → XFF is trusted)
-    for (let i = 0; i <= MAX_REQUESTS; i++) {
+    for (let i = 0; i < MAX_REQUESTS; i++) {
       await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.1');
     }
     const blockedA = await supertest(app).get('/test').set('X-Forwarded-For', '10.0.0.1');

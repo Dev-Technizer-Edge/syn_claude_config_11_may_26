@@ -54,7 +54,7 @@ function rateLimiter(req, res, next) {
   res.set('X-RateLimit-Remaining', String(remaining));
   res.set('X-RateLimit-Reset', String(resetSecs));
 
-  if (entry.count > MAX_REQUESTS) {
+  if (entry.count >= MAX_REQUESTS) {
     res.set('Retry-After', String(resetSecs));
     return res.status(429).json({ error: 'Too many requests, please try again later.' });
   }
